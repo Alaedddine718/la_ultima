@@ -15,5 +15,17 @@ class UIController:
             return "Voto registrado y token generado."
         except Exception as e:
             return str(e)
+         def ver_tokens_usuario(self, username):
+        return self.nft_service.obtener_tokens_usuario(username)
+
+    def transferir_token(self, token_id, nuevo_owner):
+        try:
+            self.nft_service.transferir_token(token_id, nuevo_owner)
+            return "Token transferido correctamente."
+        except Exception as e:
+            return str(e)
+
+    def responder_chat(self, username, mensaje):
+        return self.chatbot_service.responder(username, mensaje)
 
    
