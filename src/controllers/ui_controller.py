@@ -15,7 +15,7 @@ class UIController:
             return "Voto registrado y token generado."
         except Exception as e:
             return str(e)
-         def ver_tokens_usuario(self, username):
+    def ver_tokens_usuario(self, username):
         return self.nft_service.obtener_tokens_usuario(username)
 
     def transferir_token(self, token_id, nuevo_owner):
