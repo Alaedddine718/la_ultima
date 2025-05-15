@@ -30,4 +30,29 @@ class CLIController:
                 duracion = int(input("Duración en segundos: "))
                 eid = self.poll_service.crear_encuesta(pregunta, opciones, duracion)
                 print(f"Encuesta creada con ID {eid}")
-            
+            elif comando == "votar":
+                pid = input("ID de encuesta: ")
+                opcion = input("Opción: ")
+                try:
+                    self.poll_service.votar(pid, self.usuario_actual, opcion)
+                    self.nft_service.generar_token(self.usuario_actual, pid, opcion)
+                    print("Voto registrado y token generado.")
+                except Exception as e:
+                    print(f"Error: {e}")
+            elif comando == "resultados":
+                pid = input("ID de encuesta: ")
+                resultados = self.poll_service.obtener_resultados(pid)
+                for op, val in resultados.items():
+                    print(f"{op}: {val}")
+            elif comando == "cerrar_encuesta":
+                pid = input("ID de encuesta: ")
+                self.poll_service.cerrar_encuesta(pid)
+                print("Encuesta cerrada.")
+            elif comando == "mis_tokens":
+                tokens = self.nft_service.obtener_tokens_usuario(self.usuario_actual)
+                for t in tokens:
+                    print(t)
+            elif comando == "salir":
+                break
+            else:
+                print("Comando no reconocido.")
