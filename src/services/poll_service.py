@@ -21,4 +21,17 @@ class PollService:
         encuesta.votar(username, opcion)
         return encuesta.resultados
 
+    def cerrar_encuesta(self, poll_id):
+        encuesta = self.encuestas_activas.get(poll_id)
+        if encuesta:
+            encuesta.cerrar()
+            self.repo.guardar_encuesta(self._a_dict(encuesta))
+            del self.encuestas_activas[poll_id]
+
+    def obtener_resultados(self, poll_id):
+        encuesta = self.encuestas_activas.get(poll_id)
+        if encuesta:
+            return encuesta.get_resultados()
+        return {}
+
    
