@@ -17,5 +17,24 @@ class Encuesta:
         ahora = datetime.now()
         tiempo_final = self.timestamp_inicio + self.duracion
         return ahora < tiempo_final and self.estado == "activa"
+    def votar(self, username, opcion):
+        if not self.esta_activa():
+            raise Exception("La encuesta ya está cerrada.")
+        if username in self.votos:
+            raise Exception("Este usuario ya votó.")
+        if opcion not in self.opciones:
+            raise Exception("Opción no válida.")
+        self.votos[username] = opcion
+        self.resultados[opcion] += 1
+
+    def cerrar(self):
+        self.estado = "cerrada"
+
+    def get_resultados(self):
+        total = sum(self.resultados.values())
+        return {
+            opcion: f"{(count / total) * 100:.1f}%" if total > 0 else "0%"
+            for opcion, count in self.resultados.items()
+        }
 
     
