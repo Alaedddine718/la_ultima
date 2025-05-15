@@ -9,4 +9,6 @@ class Observable:
         for obs in self.observadores:
             obs.update(evento)
 
-
+class Observador:
+    def update(self, evento):
+        pass  # implementar en cada clase que escuche
