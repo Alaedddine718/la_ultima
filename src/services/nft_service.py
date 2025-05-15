@@ -17,4 +17,10 @@ class NFTService:
         self.repo.guardar_token(token_dict)
         return token_dict
 
-    
+    def transferir_token(self, token_id, nuevo_owner):
+        self.repo.transferir_token(token_id, nuevo_owner)
+
+    def obtener_tokens_usuario(self, username):
+        tokens = self.repo.cargar_todos()
+        return [t for t in tokens if t["owner"] == username]
+
