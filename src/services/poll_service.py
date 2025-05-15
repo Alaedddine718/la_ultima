@@ -34,4 +34,22 @@ class PollService:
             return encuesta.get_resultados()
         return {}
 
-   
+    def _verificar_tiempos(self):
+        expiradas = [
+            eid for eid, enc in self.encuestas_activas.items()
+            if not enc.esta_activa()
+        ]
+        for eid in expiradas:
+            self.cerrar_encuesta(eid)
+
+    def _a_dict(self, encuesta):
+        return {
+            "id": encuesta.id,
+            "pregunta": encuesta.pregunta,
+            "opciones": encuesta.opciones,
+            "votos": encuesta.votos,
+            "estado": encuesta.estado,
+            "timestamp_inicio": encuesta.timestamp_inicio.isoformat(),
+            "duracion_segundos": encuesta.duracion.total_seconds(),
+            "tipo": encuesta.tipo
+        }
