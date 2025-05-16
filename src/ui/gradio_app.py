@@ -1,57 +1,33 @@
 import gradio as gr
 
-class GradioApp:
-    def __init__(self, ui_controller):
-        self.ui = ui_controller
+# Función simulada para responder preguntas del usuario
+def responder_chat(mensaje):
+    if "ganando" in mensaje.lower():
+        return "Todavía no hay resultados disponibles."
+    else:
+        return "Soy un chatbot simulado. Pregunta algo sobre el stream."
 
-    def interfaz_encuestas(self):
-        def votar(poll_id, username, opcion):
-            return self.ui.votar_desde_ui(poll_id, username, opcion)
+# Función simulada para votar
+def votar_encuesta(nombre, opcion):
+    return f"{nombre} ha votado por '{opcion}' ✅"
 
-        encuestas = self.ui.obtener_encuestas_activas()
-        encuestas_info = "\n".join(
-            f"{e.pregunta} (ID: {e.id}) - Opciones: {', '.join(e.opciones)}"
-            for e in encuestas
-        )
+def lanzar_ui():
+    with gr.Blocks() as demo:
+        gr.Markdown("## 🎯 Plataforma de Votaciones en Vivo para Streamers")
+        gr.Markdown("Participa en encuestas, habla con el chatbot y gana tokens NFT simulados.")
 
-        with gr.Blocks() as demo:
-            gr.Markdown("# Encuestas Activas")
-            gr.Textbox(label="ID de encuesta", interactive=True)
-            gr.Textbox(label="Tu nombre de usuario", interactive=True)
-            gr.Textbox(label="Tu voto (opción)", interactive=True)
-            gr.Textbox(value=encuestas_info, label="Encuestas", interactive=False)
-            gr.Button("Votar").click(votar,
-                                     inputs=["ID de encuesta", "Tu nombre de usuario", "Tu voto (opción)"],
-                                     outputs=[])
-        return demo
+        with gr.Tab("Encuestas"):
+            nombre = gr.Textbox(label="Tu nombre de usuario")
+            opcion = gr.Radio(["Opción A", "Opción B"], label="¿Qué prefieres?")
+            boton_votar = gr.Button("Votar")
+            salida_voto = gr.Textbox(label="Resultado del voto")
 
-    def interfaz_chatbot(self):
-        def responder(usuario, mensaje):
-            return self.ui.responder_chat(usuario, mensaje)
+            boton_votar.click(fn=votar_encuesta, inputs=[nombre, opcion], outputs=salida_voto)
 
-        return gr.ChatInterface(fn=responder)
+        with gr.Tab("Chatbot"):
+            entrada_chat = gr.Textbox(label="Haz una pregunta")
+            salida_chat = gr.Textbox(label="Respuesta del bot")
+            entrada_chat.submit(responder_chat, inputs=entrada_chat, outputs=salida_chat)
 
-    def interfaz_tokens(self):
-        def ver(username):
-            tokens = self.ui.ver_tokens_usuario(username)
-            return "\n".join([str(t) for t in tokens])
+    demo.launch()
 
-        def transferir(token_id, nuevo_owner):
-            return self.ui.transferir_token(token_id, nuevo_owner)
-
-        with gr.Blocks() as demo:
-            gr.Markdown("# Galería de Tokens")
-            gr.Textbox(label="Tu usuario", interactive=True)
-            gr.Button("Ver mis tokens").click(ver, inputs=["Tu usuario"], outputs="text")
-            gr.Textbox(label="Token ID", interactive=True)
-            gr.Textbox(label="Nuevo propietario", interactive=True)
-            gr.Button("Transferir token").click(transferir, inputs=["Token ID", "Nuevo propietario"], outputs="text")
-        return demo
-
-    def lanzar(self):
-        with gr.TabbedInterface([
-            self.interfaz_encuestas(),
-            self.interfaz_chatbot(),
-            self.interfaz_tokens()
-        ], ["Encuestas", "Chatbot", "Tokens"]) as interfaz:
-            interfaz.launch()

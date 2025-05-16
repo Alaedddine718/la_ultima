@@ -2,36 +2,15 @@
 
 Este proyecto permite a los streamers crear encuestas en tiempo real, usar un chatbot de IA y entregar tokens coleccionables simulados a los espectadores que participan.
 
-## Cómo ejecutar los tests (solo con Python)
+# la_ultima – Plataforma interactiva para streamers
 
-Puedes ejecutar los tests directamente desde Python usando `pytest`:
+Este proyecto permite a los streamers crear encuestas en vivo, usar un chatbot inteligente y generar tokens NFT simulados para su audiencia.
 
-```python
-import pytest
+## Ejecución
 
-pytest.main(["-q", "tests/test_models.py"])
-pytest.main(["-q", "tests/test_services.py"])
-pytest.main(["-q", "tests/test_repositories.py"])
-pytest.main(["-q", "tests/test_patterns.py"])
-pytest.main(["-q", "tests/test_cli.py"])
-```
+✅ Simplemente pulsa "Run" y se abrirá la plataforma automáticamente en Gradio.
 
-## Cómo ejecutar la aplicación (modo CLI y UI)
+## Repositorio
 
-- **Modo CLI por defecto:**
+https://github.com/Alaeddine718/la_ultima.git
 
-```python
-import src.app
-src.app.main()
-```
-
-- **Modo interfaz Gradio (UI):**
-
-```python
-import src.app
-src.app.main(["--ui"])
-```
-
-## Repositorio del proyecto
-
-https://github.com/Alaedddine718/la_ultima.git
