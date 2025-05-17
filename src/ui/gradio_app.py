@@ -1,4 +1,7 @@
 # src/ui/gradio_app.py
+import sys
+import os
+sys.path.insert(0, os.path.abspath("src"))
 from services.poll_service import PollService
 from services.user_service import UserService
 from services.nft_service import NFTService
