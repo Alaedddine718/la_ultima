@@ -1,5 +1,5 @@
-from models.encuesta import Encuesta
-from repositories.encuesta_repo import EncuestaRepository
+from src.models.encuesta import Encuesta
+from src.repositories.encuesta_repo import EncuestaRepository
 from datetime import datetime
 
 class PollService:
