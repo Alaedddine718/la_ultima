@@ -1,15 +1,15 @@
-import gradio as gr
-from src.services.poll_service import PollService
-from src.services.user_service import UserService
-from src.services.nft_service import NFTService
-from src.services.chatbot_service import ChatbotService
+# src/ui/gradio_app.py
+from services.poll_service import PollService
+from services.user_service import UserService
+from services.nft_service import NFTService
+from services.chatbot_service import ChatbotService
 
-from src.repositories.encuesta_repo import EncuestaRepository
-from src.repositories.usuario_repo import UsuarioRepository
-from src.repositories.nft_repo import NFTRepository
+from repositories.encuesta_repo import EncuestaRepository
+from repositories.usuario_repo import UsuarioRepository
+from repositories.nft_repo import NFTRepository
 
-from src.controllers.ui_controller import UIController
-from src.config import cargar_config
+from controllers.ui_controller import UIController
+from config import cargar_config
 
 def lanzar_ui():
     config = cargar_config()
@@ -24,11 +24,14 @@ def lanzar_ui():
     chatbot_service = ChatbotService(poll_service)
 
     ui_controller = UIController(poll_service, user_service, nft_service, chatbot_service)
+    ui_controller.lanzar()
 
-    with gr.Blocks() as demo:
-        ui_controller.mostrar_interfaz(demo)
+# main.py (fuera de src)
+# Asegúrate de que main.py tenga esto:
+# from ui.gradio_app import lanzar_ui
+# if __name__ == "__main__":
+#     lanzar_ui()
 
-    demo.launch(server_port=config["puerto_ui"])
 
 
 
