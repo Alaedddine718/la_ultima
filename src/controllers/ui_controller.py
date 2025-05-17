@@ -15,6 +15,7 @@ class UIController:
             return "Voto registrado y token generado."
         except Exception as e:
             return str(e)
+
     def ver_tokens_usuario(self, username):
         return self.nft_service.obtener_tokens_usuario(username)
 
@@ -27,5 +28,10 @@ class UIController:
 
     def responder_chat(self, username, mensaje):
         return self.chatbot_service.responder(username, mensaje)
+
+    def lanzar(self):
+        # Método necesario para Gradio
+        pass
+
 
    
