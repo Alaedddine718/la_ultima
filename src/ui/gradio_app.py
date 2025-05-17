@@ -1,13 +1,17 @@
 import gradio as gr
-from controllers.ui_controller import UIController
-from services.poll_service import PollService
-from services.user_service import UserService
-from services.nft_service import NFTService
-from services.chatbot_service import ChatbotService
-from repositories.encuesta_repo import EncuestaRepository
-from repositories.usuario_repo import UsuarioRepository
-from repositories.nft_repo import NFTRepository
 
+from src.services.poll_service import PollService
+from src.services.user_service import UserService
+from src.services.nft_service import NFTService
+from src.services.chatbot_service import ChatbotService
+
+from src.repositories.encuesta_repo import EncuestaRepository
+from src.repositories.usuario_repo import UsuarioRepository
+from src.repositories.nft_repo import NFTRepository
+
+from src.controllers.ui_controller import UIController
+
+# Inicialización de servicios y controlador
 def lanzar_ui():
     encuesta_repo = EncuestaRepository()
     usuario_repo = UsuarioRepository()
@@ -20,15 +24,66 @@ def lanzar_ui():
 
     ui_controller = UIController(poll_service, user_service, nft_service, chatbot_service)
 
-    interfaz = gr.Interface(
-        fn=lambda mensaje, usuario: ui_controller.responder_chat(usuario, mensaje),
-        inputs=["text", "text"],
-        outputs="text",
-        title="Plataforma de Votaciones para Streamers",
-        description="Escribe un mensaje y tu nombre de usuario"
-    )
+    sesion = {"usuario": None}
 
-    interfaz.launch()
+    def login(username):
+        sesion["usuario"] = username
+        return f"Bienvenido {username}!"
+
+    def votar_ui(poll_id, opcion):
+        if not sesion["usuario"]:
+            return "Debes iniciar sesión."
+        return ui_controller.votar_desde_ui(poll_id, sesion["usuario"], opcion)
+
+    def ver_tokens():
+        if not sesion["usuario"]:
+            return "Inicia sesión para ver tus tokens."
+        tokens = ui_controller.ver_tokens_usuario(sesion["usuario"])
+        if not tokens:
+            return "No tienes tokens."
+        return "\n".join([f"ID: {t['token_id']} | Encuesta: {t['poll_id']} | Opción: {t['option']}" for t in tokens])
+
+    def transferir(token_id, nuevo_owner):
+        return ui_controller.transferir_token(token_id, nuevo_owner)
+
+    def chatbot(mensaje):
+        return ui_controller.responder_chat(sesion["usuario"] or "anonimo", mensaje)
+
+    with gr.Blocks() as demo:
+        gr.Markdown("# 🗳️ Plataforma de Votaciones en Vivo")
+
+        with gr.Tab("🔐 Iniciar sesión"):
+            user = gr.Textbox(label="Nombre de usuario")
+            login_btn = gr.Button("Iniciar sesión")
+            login_out = gr.Textbox()
+            login_btn.click(fn=login, inputs=user, outputs=login_out)
+
+        with gr.Tab("🗳️ Votar"):
+            poll_id = gr.Textbox(label="ID de la encuesta")
+            opcion = gr.Textbox(label="Opción a votar")
+            votar_btn = gr.Button("Votar")
+            resultado_voto = gr.Textbox()
+            votar_btn.click(fn=votar_ui, inputs=[poll_id, opcion], outputs=resultado_voto)
+
+        with gr.Tab("🪙 Ver mis tokens"):
+            tokens_btn = gr.Button("Mostrar tokens")
+            tokens_out = gr.Textbox(lines=10)
+            tokens_btn.click(fn=ver_tokens, outputs=tokens_out)
+
+        with gr.Tab("🔄 Transferir token"):
+            token_id = gr.Textbox(label="ID del token")
+            nuevo_owner = gr.Textbox(label="Nuevo propietario")
+            transferir_btn = gr.Button("Transferir")
+            transferir_out = gr.Textbox()
+            transferir_btn.click(fn=transferir, inputs=[token_id, nuevo_owner], outputs=transferir_out)
+
+        with gr.Tab("🤖 Chatbot"):
+            pregunta = gr.Textbox(label="Escribe tu mensaje")
+            respuesta = gr.Textbox(label="Respuesta")
+            pregunta.submit(fn=chatbot, inputs=pregunta, outputs=respuesta)
+
+    demo.launch()
+
 
 
 
