@@ -12,7 +12,6 @@ from src.repositories.nft_repo import crear_nft_repo
 from src.controllers.ui_controller import UIController
 from src.config import cargar_config
 
-# Inicialización de servicios y controlador
 def lanzar_ui():
     config = cargar_config()
 
@@ -27,53 +26,60 @@ def lanzar_ui():
 
     ui_controller = UIController(poll_service, user_service, nft_service, chatbot_service)
 
-    def procesar_mensaje(mensaje, username):
+    def registrar_usuario(username, password):
+        try:
+            user_service.registrar(username, password)
+            return "Usuario registrado correctamente."
+        except Exception as e:
+            return str(e)
+
+    def login_usuario(username, password):
+        try:
+            token = user_service.login(username, password)
+            return f"Sesión iniciada. Token: {token}"
+        except Exception as e:
+            return str(e)
+
+    def responder_chat(mensaje, username):
         if not mensaje or not username:
-            return "Por favor, ingresa un mensaje y tu nombre."
+            return "Por favor, escribe un mensaje y tu usuario."
         return ui_controller.responder_chat(username, mensaje)
 
-    def ver_tokens(username):
-        if not username:
-            return "Por favor, introduce tu nombre de usuario."
+    def ver_tokens_usuario(username):
         tokens = ui_controller.ver_tokens_usuario(username)
-        if not tokens:
-            return "No se encontraron tokens."
-        return "\n".join([str(token) for token in tokens])
+        return "\n".join([str(t) for t in tokens]) if tokens else "No tienes tokens."
 
-    with gr.Blocks(title="Plataforma de Votaciones para Streamers") as interfaz:
+    with gr.Blocks(title="Plataforma de Votaciones para Streamers") as demo:
         gr.Markdown("# Plataforma de Votaciones para Streamers")
 
-        with gr.Row():
-            mensaje_input = gr.Textbox(label="Escribe un mensaje", placeholder="mensaje")
-            respuesta_output = gr.Textbox(label="Respuesta del sistema")
+        with gr.Tab("Chat"):
+            with gr.Row():
+                mensaje = gr.Textbox(label="Escribe un mensaje")
+                username = gr.Textbox(label="Usuario")
+            with gr.Row():
+                enviar_btn = gr.Button("Enviar")
+                limpiar_btn = gr.Button("Limpiar")
+            respuesta = gr.Textbox(label="Respuesta del sistema", interactive=False)
+            ver_tokens_btn = gr.Button("Ver mis tokens")
 
-        with gr.Row():
-            usuario_input = gr.Textbox(label="Usuario")
-            ver_btn = gr.Button("Ver mis tokens")
+        with gr.Tab("Autenticación"):
+            gr.Markdown("## Registro e Inicio de sesión")
+            user = gr.Textbox(label="Usuario")
+            pwd = gr.Textbox(label="Contraseña", type="password")
+            with gr.Row():
+                btn_reg = gr.Button("Registrarse")
+                btn_login = gr.Button("Iniciar sesión")
+            auth_output = gr.Textbox(label="Resultado")
 
-        with gr.Row():
-            enviar_btn = gr.Button("Enviar")
-            limpiar_btn = gr.Button("Limpiar")
+        enviar_btn.click(fn=responder_chat, inputs=[mensaje, username], outputs=respuesta)
+        limpiar_btn.click(fn=lambda: ("", "", ""), outputs=[mensaje, username, respuesta])
+        ver_tokens_btn.click(fn=ver_tokens_usuario, inputs=username, outputs=respuesta)
 
-        enviar_btn.click(
-            fn=procesar_mensaje,
-            inputs=[mensaje_input, usuario_input],
-            outputs=respuesta_output
-        )
+        btn_reg.click(fn=registrar_usuario, inputs=[user, pwd], outputs=auth_output)
+        btn_login.click(fn=login_usuario, inputs=[user, pwd], outputs=auth_output)
 
-        ver_btn.click(
-            fn=ver_tokens,
-            inputs=usuario_input,
-            outputs=respuesta_output
-        )
+    demo.launch(server_port=config["puerto_ui"])
 
-        limpiar_btn.click(
-            fn=lambda: ("", ""),
-            inputs=[],
-            outputs=[mensaje_input, respuesta_output]
-        )
-
-    interfaz.launch(server_port=config["puerto_ui"])
 
 
 

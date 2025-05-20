@@ -29,9 +29,6 @@ class UIController:
     def responder_chat(self, username, mensaje):
         return self.chatbot_service.responder(username, mensaje)
 
-    def lanzar(self):
-        # Método necesario para Gradio
-        pass
 
 
    
