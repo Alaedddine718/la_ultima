@@ -8,6 +8,7 @@ class UsuarioRepository(ABC):
     @abstractmethod
     def buscar_usuario(self, username):
         pass
+
 from src.config import cargar_config
 
 def crear_usuario_repo():
