@@ -14,6 +14,7 @@ class NFTRepository(ABC):
     def transferir_token(self, token_id, nuevo_owner):
         pass
 
+
 def crear_nft_repo():
     config = cargar_config()
     tipo = config.get("base_datos")
@@ -36,5 +37,6 @@ def crear_nft_repo():
 
     else:
         raise Exception("Tipo de base de datos no soportado: " + tipo)
+
 
 
