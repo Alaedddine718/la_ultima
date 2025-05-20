@@ -2,20 +2,20 @@ import bcrypt
 import uuid
 
 class UserService:
-    def __init__(self, repo):
+    def _init_(self, repo):
         self.repo = repo
         self.sesiones = {}
 
     def registrar(self, username, password):
         if self.repo.buscar_usuario(username):
-            raise Exception("Usuario ya existe.")
+            raise Exception("El usuario ya existe.")
         hashed = bcrypt.hashpw(password.encode(), bcrypt.gensalt())
-        usuario_dict = {
+        self.repo.guardar_usuario({
             "username": username,
             "password_hash": hashed.decode(),
             "tokens": []
-        }
-        self.repo.guardar_usuario(usuario_dict)
+        })
+        return "Usuario registrado correctamente."
 
     def login(self, username, password):
         usuario = self.repo.buscar_usuario(username)
@@ -23,11 +23,9 @@ class UserService:
             raise Exception("Usuario no encontrado.")
         if not bcrypt.checkpw(password.encode(), usuario["password_hash"].encode()):
             raise Exception("Contraseña incorrecta.")
-        token_sesion = str(uuid.uuid4())
-        self.sesiones[username] = token_sesion
-        return token_sesion
+        token = str(uuid.uuid4())
+        self.sesiones[username] = token
+        return f"Inicio de sesión correcto. Token: {token}"
 
-    def verificar_login(self, username, token_sesion):
-        return self.sesiones.get(username) == token_sesion
-
-
+    def verificar_login(self, username, token):
+        return self.sesiones.get(username) == token

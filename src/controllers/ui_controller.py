@@ -1,20 +1,15 @@
 class UIController:
-    def __init__(self, poll_service, user_service, nft_service, chatbot_service):
+    def _init_(self, poll_service, user_service, nft_service, chatbot_service):
         self.poll_service = poll_service
         self.user_service = user_service
         self.nft_service = nft_service
         self.chatbot_service = chatbot_service
 
     def registrar_usuario(self, username, password):
-        if self.user_service.obtener_usuario(username):
-            return "El usuario ya existe."
-        self.user_service.registrar_usuario(username, password)
-        return "Usuario registrado correctamente."
+        return self.user_service.registrar(username, password)
 
     def iniciar_sesion(self, username, password):
-        if self.user_service.verificar_credenciales(username, password):
-            return "Inicio de sesión exitoso."
-        return "Credenciales incorrectas."
+        return self.user_service.login(username, password)
 
     def obtener_encuestas_activas(self):
         return list(self.poll_service.encuestas_activas.values())
