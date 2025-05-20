@@ -38,6 +38,20 @@ def lanzar_ui():
             btn_registro.click(controller.registrar_usuario, [usuario_auth, contraseña_auth], resultado_auth)
             btn_login.click(controller.iniciar_sesion, [usuario_auth, contraseña_auth], resultado_auth)
 
+        with gr.Tab("Encuestas en vivo"):
+            usuario_voto = gr.Textbox(label="Tu nombre de usuario")
+            encuestas_activas = gr.Dropdown(label="Encuestas activas", choices=[], interactive=True)
+            opcion_voto = gr.Textbox(label="Tu opción")
+            resultado_voto = gr.Textbox(label="Resultado del voto")
+            btn_cargar_encuestas = gr.Button("Cargar encuestas")
+            btn_votar = gr.Button("Votar")
+
+            btn_cargar_encuestas.click(fn=lambda: [e.id for e in controller.obtener_encuestas_activas()],
+                                       outputs=encuestas_activas)
+            btn_votar.click(controller.votar_desde_ui,
+                            inputs=[encuestas_activas, usuario_voto, opcion_voto],
+                            outputs=resultado_voto)
+
         with gr.Tab("Chat"):
             mensaje = gr.Textbox(label="Escribe un mensaje")
             usuario_chat = gr.Textbox(label="Usuario")
