@@ -1,9 +1,8 @@
 import bcrypt
 import uuid
-from src.repositories.usuario_repo import UsuarioRepository
 
 class UserService:
-    def __init__(self, repo: UsuarioRepository):
+    def __init__(self, repo):
         self.repo = repo
         self.sesiones = {}
 
@@ -30,4 +29,5 @@ class UserService:
 
     def verificar_login(self, username, token_sesion):
         return self.sesiones.get(username) == token_sesion
+
 
