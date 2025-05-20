@@ -12,31 +12,34 @@ from src.repositories.nft_repo import crear_nft_repo
 from src.controllers.ui_controller import UIController
 from src.config import cargar_config
 
+# Inicialización de servicios y controlador
 def lanzar_ui():
     config = cargar_config()
 
-    # Crear repositorios según config.json
     encuesta_repo = crear_encuesta_repo()
     usuario_repo = crear_usuario_repo()
     nft_repo = crear_nft_repo()
 
-    # Crear servicios
     poll_service = PollService(encuesta_repo)
     user_service = UserService(usuario_repo)
     nft_service = NFTService(nft_repo)
     chatbot_service = ChatbotService(config["modelo_chatbot"])
 
-    # Crear controlador
     ui_controller = UIController(poll_service, user_service, nft_service, chatbot_service)
 
-    # Funciones conectadas a Gradio
-    def enviar_mensaje(mensaje, usuario):
-        return ui_controller.responder_chat(usuario, mensaje)
+    def procesar_mensaje(mensaje, username):
+        if not mensaje or not username:
+            return "Por favor, ingresa un mensaje y tu nombre."
+        return ui_controller.responder_chat(username, mensaje)
 
-    def ver_tokens(usuario):
-        return str(ui_controller.ver_tokens_usuario(usuario))
+    def ver_tokens(username):
+        if not username:
+            return "Por favor, introduce tu nombre de usuario."
+        tokens = ui_controller.ver_tokens_usuario(username)
+        if not tokens:
+            return "No se encontraron tokens."
+        return "\n".join([str(token) for token in tokens])
 
-    # Interfaz Gradio
     with gr.Blocks(title="Plataforma de Votaciones para Streamers") as interfaz:
         gr.Markdown("# Plataforma de Votaciones para Streamers")
 
@@ -46,17 +49,32 @@ def lanzar_ui():
 
         with gr.Row():
             usuario_input = gr.Textbox(label="Usuario")
-            boton_ver_tokens = gr.Button("Ver mis tokens")
+            ver_btn = gr.Button("Ver mis tokens")
 
         with gr.Row():
-            boton_enviar = gr.Button("Enviar")
-            boton_limpiar = gr.Button("Limpiar")
+            enviar_btn = gr.Button("Enviar")
+            limpiar_btn = gr.Button("Limpiar")
 
-        boton_enviar.click(enviar_mensaje, inputs=[mensaje_input, usuario_input], outputs=respuesta_output)
-        boton_limpiar.click(lambda: ("", "", ""), outputs=[mensaje_input, usuario_input, respuesta_output])
-        boton_ver_tokens.click(ver_tokens, inputs=usuario_input, outputs=respuesta_output)
+        enviar_btn.click(
+            fn=procesar_mensaje,
+            inputs=[mensaje_input, usuario_input],
+            outputs=respuesta_output
+        )
+
+        ver_btn.click(
+            fn=ver_tokens,
+            inputs=usuario_input,
+            outputs=respuesta_output
+        )
+
+        limpiar_btn.click(
+            fn=lambda: ("", ""),
+            inputs=[],
+            outputs=[mensaje_input, respuesta_output]
+        )
 
     interfaz.launch(server_port=config["puerto_ui"])
+
 
 
 
