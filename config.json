@@ -4,11 +4,8 @@
   "puerto_ui": 7860,
   "estrategia_desempate": "alfabetica",
   "base_datos": "mongo",
-  "mongo_uri": "mongodb://localhost:27017",
-  "firebase_key": "",
-  "neo4j_uri": "",
-  "neo4j_user": "",
-  "neo4j_password": ""
+  "mongo_uri": "mongodb+srv://adaoudi:unieunieunie@cluster0.jto2rqx.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
 }
+
 
 
