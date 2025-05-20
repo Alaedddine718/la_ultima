@@ -30,6 +30,13 @@ def lanzar_ui():
         sesion["usuario"] = username
         return f"Bienvenido {username}!"
 
+    def registrar(username, password):
+        try:
+            user_service.registrar(username, password)
+            return "✅ Usuario creado correctamente"
+        except Exception as e:
+            return f"❌ {str(e)}"
+
     def votar_ui(poll_id, opcion):
         if not sesion["usuario"]:
             return "Debes iniciar sesión."
@@ -52,11 +59,19 @@ def lanzar_ui():
     with gr.Blocks() as demo:
         gr.Markdown("# 🗳️ Plataforma de Votaciones en Vivo")
 
-        with gr.Tab("🔐 Iniciar sesión"):
+        with gr.Tab("🔐 Iniciar sesión / Registro"):
+            gr.Markdown("### 🔑 Iniciar sesión")
             user = gr.Textbox(label="Nombre de usuario")
             login_btn = gr.Button("Iniciar sesión")
             login_out = gr.Textbox()
             login_btn.click(fn=login, inputs=user, outputs=login_out)
+
+            gr.Markdown("### 🆕 Crear cuenta")
+            nuevo_user = gr.Textbox(label="Nuevo usuario")
+            nueva_contra = gr.Textbox(label="Contraseña", type="password")
+            registro_btn = gr.Button("Registrar usuario")
+            registro_out = gr.Textbox()
+            registro_btn.click(fn=registrar, inputs=[nuevo_user, nueva_contra], outputs=registro_out)
 
         with gr.Tab("🗳️ Votar"):
             poll_id = gr.Textbox(label="ID de la encuesta")
@@ -83,6 +98,7 @@ def lanzar_ui():
             pregunta.submit(fn=chatbot, inputs=pregunta, outputs=respuesta)
 
     demo.launch()
+
 
 
 
