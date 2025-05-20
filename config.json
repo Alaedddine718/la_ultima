@@ -2,5 +2,13 @@
   "duracion_defecto": 60,
   "modelo_chatbot": "facebook/blenderbot-400M-distill",
   "puerto_ui": 7860,
-  "estrategia_desempate": "alfabetica"
+  "estrategia_desempate": "alfabetica",
+  "base_datos": "mongo",
+  "mongo_uri": "mongodb://localhost:27017",
+  "firebase_key": "",
+  "neo4j_uri": "",
+  "neo4j_user": "",
+  "neo4j_password": ""
 }
+
+
