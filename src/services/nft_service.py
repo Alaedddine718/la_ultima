@@ -1,8 +1,6 @@
-from src.repositories.nft_repo import crear_nft_repo
-
 class NFTService:
-    def __init__(self):
-        self.repo = crear_nft_repo()
+    def __init__(self, repo):
+        self.repo = repo
 
     def generar_token(self, username, encuesta_id, opcion):
         token = {
@@ -17,4 +15,5 @@ class NFTService:
 
     def transferir_token(self, token_id, nuevo_owner):
         self.repo.transferir_token(token_id, nuevo_owner)
+
 
