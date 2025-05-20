@@ -6,7 +6,7 @@ from src.services.nft_service import NFTService
 from src.services.chatbot_service import ChatbotService
 
 from src.repositories.encuesta_repo import EncuestaRepository
-from src.repositories.usuario_repo import UsuarioRepository
+from src.repositories.usuario_repo_factory import crear_usuario_repo
 from src.repositories.nft_repo import NFTRepository
 
 from src.controllers.ui_controller import UIController
@@ -14,7 +14,7 @@ from src.controllers.ui_controller import UIController
 # Inicialización de servicios y controlador
 def lanzar_ui():
     encuesta_repo = EncuestaRepository()
-    usuario_repo = UsuarioRepository()
+    usuario_repo = crear_usuario_repo()
     nft_repo = NFTRepository()
 
     poll_service = PollService(encuesta_repo)
@@ -24,11 +24,16 @@ def lanzar_ui():
 
     ui_controller = UIController(poll_service, user_service, nft_service, chatbot_service)
 
-    sesion = {"usuario": None}
+    sesion = {"usuario": None, "token": None}
 
-    def login(username):
-        sesion["usuario"] = username
-        return f"Bienvenido {username}!"
+    def login(username, password):
+        try:
+            token = user_service.login(username, password)
+            sesion["usuario"] = username
+            sesion["token"] = token
+            return f"Bienvenido {username}!"
+        except Exception as e:
+            return f"❌ {str(e)}"
 
     def registrar(username, password):
         try:
@@ -62,9 +67,10 @@ def lanzar_ui():
         with gr.Tab("🔐 Iniciar sesión / Registro"):
             gr.Markdown("### 🔑 Iniciar sesión")
             user = gr.Textbox(label="Nombre de usuario")
+            pwd = gr.Textbox(label="Contraseña", type="password")
             login_btn = gr.Button("Iniciar sesión")
             login_out = gr.Textbox()
-            login_btn.click(fn=login, inputs=user, outputs=login_out)
+            login_btn.click(fn=login, inputs=[user, pwd], outputs=login_out)
 
             gr.Markdown("### 🆕 Crear cuenta")
             nuevo_user = gr.Textbox(label="Nuevo usuario")
@@ -98,6 +104,7 @@ def lanzar_ui():
             pregunta.submit(fn=chatbot, inputs=pregunta, outputs=respuesta)
 
     demo.launch()
+
 
 
 
