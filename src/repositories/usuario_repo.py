@@ -29,5 +29,4 @@ def crear_usuario_repo():
         )
     
     else:
-        raise Exception("Tipo de base
-
+        raise Exception("Tipo de base de datos no soportado: " + tipo)
