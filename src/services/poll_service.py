@@ -1,5 +1,5 @@
 class PollService:
-    def __init__(self, encuesta_repo):
+    def _init_(self, encuesta_repo):
         self.encuesta_repo = encuesta_repo
 
     def crear_encuesta(self, pregunta, opciones, creador, duracion):
@@ -17,6 +17,6 @@ class PollService:
     def obtener_resultados(self, encuesta_id):
         return self.encuesta_repo.obtener_resultados(encuesta_id)
 
-    def encuestas_activas(self):
+    def obtener_encuestas_activas(self):
         return self.encuesta_repo.obtener_encuestas_activas()
 

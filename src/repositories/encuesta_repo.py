@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from src.config import cargar_config
 
 class EncuestaRepository(ABC):
     @abstractmethod
@@ -9,12 +10,25 @@ class EncuestaRepository(ABC):
     def obtener_encuesta(self, encuesta_id):
         pass
 
+# Dummy temporal para desarrollo
+class DummyEncuestaRepo(EncuestaRepository):
+    def _init_(self):
+        self.db = {}
+
+    def guardar_encuesta(self, encuesta_dict):
+        self.db[encuesta_dict["id"]] = encuesta_dict
+
+    def obtener_encuesta(self, encuesta_id):
+        return self.db.get(encuesta_id, None)
+
 def crear_encuesta_repo():
-    from src.config import cargar_config
     config = cargar_config()
     tipo = config.get("base_datos")
 
-    if tipo == "mongo":
+    if tipo == "dummy":
+        return DummyEncuestaRepo()
+    
+    elif tipo == "mongo":
         from src.repositories.mongo.encuesta_repo_mongo import EncuestaRepositoryMongo
         return EncuestaRepositoryMongo(config["mongo_uri"])
     

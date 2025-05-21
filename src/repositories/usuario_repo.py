@@ -10,9 +10,19 @@ class UsuarioRepository(ABC):
     def buscar_usuario(self, username):
         pass
 
+class UsuarioRepositoryDummy(UsuarioRepository):
+    def _init_(self):
+        self.usuarios = {}
+
+    def guardar_usuario(self, usuario_dict):
+        self.usuarios[usuario_dict["username"]] = usuario_dict
+
+    def buscar_usuario(self, username):
+        return self.usuarios.get(username)
+
 def crear_usuario_repo():
     config = cargar_config()
-    tipo = config.get("base_datos")
+    tipo = config.get("base_datos", "dummy")
 
     if tipo == "mongo":
         from src.repositories.mongo.usuario_repo_mongo import UsuarioRepositoryMongo
@@ -31,6 +41,6 @@ def crear_usuario_repo():
         )
 
     else:
-        raise Exception("Tipo de base de datos no soportado: " + tipo)
+        return UsuarioRepositoryDummy()
 
 

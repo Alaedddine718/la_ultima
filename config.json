@@ -1,10 +1,8 @@
 {
-  "duracion_defecto": 60,
+  "base_datos": "dummy",
   "modelo_chatbot": "facebook/blenderbot-400M-distill",
   "puerto_ui": 7860,
-  "estrategia_desempate": "alfabetica",
-  "base_datos": "mongo",
-  "mongo_uri": "mongodb+srv://adaoudi:unieunieunie@cluster0.jto2rqx.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
+  "estrategia_desempate": "alfabetica"
 }
 
 
