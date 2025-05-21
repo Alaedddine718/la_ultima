@@ -25,7 +25,7 @@ class EncuestaRepository(ABC):
 
 
 class DummyEncuestaRepo(EncuestaRepository):
-    def _init_(self):
+    def _init_(self):  # <---- CORREGIDO AQUI
         self.encuestas = {}
 
     def guardar_encuesta(self, encuesta_dict):
@@ -87,7 +87,6 @@ def crear_encuesta_repo():
     
     else:
         raise Exception("Tipo de base de datos no soportado: " + str(tipo))
-
 
 
 

@@ -1,7 +1,7 @@
 from src.repositories.encuesta_repo import EncuestaRepository
 
 class EncuestaRepositoryDummy(EncuestaRepository):
-    def _init_(self):
+    def __init__(self):
         self.encuestas = {}
         self.votos = {}
 
