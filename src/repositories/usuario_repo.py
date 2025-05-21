@@ -11,7 +11,7 @@ class UsuarioRepository(ABC):
         pass
 
 class UsuarioRepositoryDummy(UsuarioRepository):
-    def _init_(self):  # ← ← ← Corregido aquí
+    def __init__(self):  # ← CORRECTO: con doble guion bajo __init__
         self.usuarios = {}
 
     def guardar_usuario(self, usuario_dict):
