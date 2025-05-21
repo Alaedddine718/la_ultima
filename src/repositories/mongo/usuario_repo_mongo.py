@@ -2,7 +2,7 @@ from pymongo import MongoClient
 from src.repositories.usuario_repo import UsuarioRepository
 
 class UsuarioRepositoryMongo(UsuarioRepository):
-    def _init_(self, uri):
+    def __init__(self, uri):
         self.client = MongoClient(uri)
         self.db = self.client["la_ultima"]
         self.usuarios = self.db["usuarios"]

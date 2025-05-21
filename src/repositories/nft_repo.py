@@ -14,8 +14,9 @@ class NFTRepository(ABC):
     def transferir_token(self, token_id, nuevo_owner):
         pass
 
+
 class NFTRepositoryDummy(NFTRepository):
-    def __init__(self):  # CORREGIDO
+    def _init_(self):
         self.tokens = []
 
     def guardar_token(self, token_dict):
@@ -30,12 +31,20 @@ class NFTRepositoryDummy(NFTRepository):
                 t["owner"] = nuevo_owner
                 return
 
+
 def crear_nft_repo():
     config = cargar_config()
-    tipo = config.get("base_datos")
+    tipo = config.get("base_datos", "dummy")
+
     if tipo == "dummy":
         return NFTRepositoryDummy()
-    raise Exception("Tipo de base de datos no soportado: " + tipo)
+
+    elif tipo == "mongo":
+        from src.repositories.mongo.nft_repo_mongo import NFTRepositoryMongo
+        return NFTRepositoryMongo(config["mongo_uri"])
+
+    else:
+        raise Exception("Tipo de base de datos no soportado: " + tipo)
 
 
 

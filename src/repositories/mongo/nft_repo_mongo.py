@@ -2,7 +2,7 @@ from pymongo import MongoClient
 from src.repositories.nft_repo import NFTRepository
 
 class NFTRepositoryMongo(NFTRepository):
-    def _init_(self, uri):
+    def __init__(self, uri):
         self.client = MongoClient(uri)
         self.db = self.client["la_ultima"]
         self.tokens = self.db["tokens"]
