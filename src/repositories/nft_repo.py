@@ -15,7 +15,7 @@ class NFTRepository(ABC):
         pass
 
 class NFTRepositoryDummy(NFTRepository):
-    def _init_(self):
+    def __init__(self):  # CORREGIDO
         self.tokens = []
 
     def guardar_token(self, token_dict):

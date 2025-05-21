@@ -38,6 +38,15 @@ def lanzar_ui():
         except Exception as e:
             return f"Error al crear encuesta: {str(e)}"
 
+    def votar_ui(encuesta_id, usuario, opcion):
+        return controller.votar_desde_ui(encuesta_id, usuario, opcion)
+
+    def ver_resultados_ui(encuesta_id):
+        return controller.obtener_resultados_ui(encuesta_id)
+
+    def ver_encuestas_activas_ui():
+        return controller.obtener_encuestas_activas()
+
     with gr.Blocks() as demo:
         gr.Markdown("# Bienvenido a la app")
 
@@ -64,7 +73,27 @@ def lanzar_ui():
             boton = gr.Button("Crear encuesta")
             boton.click(fn=crear_encuesta, inputs=[pregunta, opciones, creador, duracion], outputs=resultado)
 
+        with gr.Tab("Votar"):
+            encuesta_id = gr.Textbox(label="ID de la encuesta")
+            usuario = gr.Textbox(label="Usuario")
+            opcion = gr.Textbox(label="Opción")
+            resultado_voto = gr.Textbox(label="Resultado del voto")
+            boton_votar = gr.Button("Votar")
+            boton_votar.click(fn=votar_ui, inputs=[encuesta_id, usuario, opcion], outputs=resultado_voto)
+
+        with gr.Tab("Ver resultados"):
+            encuesta_id_r = gr.Textbox(label="ID de la encuesta")
+            resultados = gr.Textbox(label="Resultados")
+            boton_ver = gr.Button("Ver resultados")
+            boton_ver.click(fn=ver_resultados_ui, inputs=[encuesta_id_r], outputs=resultados)
+
+        with gr.Tab("Encuestas activas"):
+            activas_out = gr.Textbox(label="Encuestas activas")
+            btn_activas = gr.Button("Mostrar encuestas activas")
+            btn_activas.click(fn=ver_encuestas_activas_ui, outputs=activas_out)
+
     demo.launch()
+
 
 
 
