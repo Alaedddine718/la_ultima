@@ -1,5 +1,4 @@
 import gradio as gr
-import json
 from src.services.poll_service import PollService
 from src.services.user_service import UserService
 from src.services.nft_service import NFTService
@@ -30,9 +29,14 @@ def lanzar_ui():
     def manejar_login(username, password):
         return controller.iniciar_sesion(username, password)
 
-    def crear_encuesta_fn(pregunta, opciones, creador, duracion):
-        lista_opciones = [op.strip() for op in opciones.split(",")]
-        return controller.crear_encuesta(pregunta, lista_opciones, creador, duracion)
+    def crear_encuesta(pregunta, opciones_str, creador, duracion_str):
+        try:
+            opciones = [op.strip() for op in opciones_str.split(",")]
+            duracion = int(duracion_str)
+            encuesta_id = controller.crear_encuesta_ui(pregunta, opciones, creador, duracion)
+            return f"Encuesta creada correctamente. ID: {encuesta_id}"
+        except Exception as e:
+            return f"Error al crear encuesta: {str(e)}"
 
     with gr.Blocks() as demo:
         gr.Markdown("# Bienvenido a la app")
@@ -55,14 +59,10 @@ def lanzar_ui():
             pregunta = gr.Textbox(label="Pregunta")
             opciones = gr.Textbox(label="Opciones (separadas por coma)")
             creador = gr.Textbox(label="Creador")
-            duracion = gr.Number(label="Duración (en segundos)", value=60)
-            out_encuesta = gr.Textbox(label="Resultado")
-            crear_btn = gr.Button("Crear encuesta")
-            crear_btn.click(
-                fn=crear_encuesta_fn,
-                inputs=[pregunta, opciones, creador, duracion],
-                outputs=out_encuesta
-            )
+            duracion = gr.Textbox(label="Duración (en segundos)")
+            resultado = gr.Textbox(label="Resultado")
+            boton = gr.Button("Crear encuesta")
+            boton.click(fn=crear_encuesta, inputs=[pregunta, opciones, creador, duracion], outputs=resultado)
 
     demo.launch()
 

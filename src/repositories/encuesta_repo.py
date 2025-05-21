@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from datetime import datetime, timedelta
 from src.config import cargar_config
 
 class EncuestaRepository(ABC):
@@ -24,7 +25,7 @@ class EncuestaRepository(ABC):
 
 
 class DummyEncuestaRepo(EncuestaRepository):
-    def __init__(self):
+    def _init_(self):
         self.encuestas = {}
 
     def guardar_encuesta(self, encuesta_dict):
@@ -53,7 +54,14 @@ class DummyEncuestaRepo(EncuestaRepository):
         encuesta["resultados"][opcion] += 1
 
     def obtener_encuestas_activas(self):
-        return list(self.encuestas.values())
+        activas = []
+        ahora = datetime.now()
+        for encuesta in self.encuestas.values():
+            inicio = datetime.fromisoformat(encuesta["inicio"])
+            duracion = int(encuesta["duracion"])
+            if ahora < inicio + timedelta(seconds=duracion):
+                activas.append(encuesta)
+        return activas
 
 
 def crear_encuesta_repo():

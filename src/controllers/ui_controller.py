@@ -49,6 +49,8 @@ class UIController:
 
     def responder_chat(self, username, mensaje):
         return self.chatbot_service.responder(username, mensaje)
+    def crear_encuesta_ui(self, pregunta, opciones, creador, duracion):
+        return self.poll_service.crear_encuesta(pregunta, opciones, creador, duracion)
 
 
 
