@@ -2,7 +2,7 @@ import uuid
 from datetime import datetime, timedelta
 
 class PollService:
-    def _init_(self, encuesta_repo):
+    def __init__(self, encuesta_repo):
         self.encuesta_repo = encuesta_repo
         self.encuestas_activas = {}  # Memoria temporal para encuestas activas
 
