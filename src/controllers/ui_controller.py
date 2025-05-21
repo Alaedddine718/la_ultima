@@ -6,10 +6,15 @@ class UIController:
         self.chatbot_service = chatbot_service
 
     def registrar_usuario(self, username, password):
-        return self.user_service.registrar(username, password)
+        if self.user_service.obtener_usuario(username):
+            return "El usuario ya existe."
+        self.user_service.registrar_usuario(username, password)
+        return "Usuario registrado correctamente."
 
     def iniciar_sesion(self, username, password):
-        return self.user_service.login(username, password)
+        if self.user_service.verificar_credenciales(username, password):
+            return "Inicio de sesión exitoso."
+        return "Credenciales incorrectas."
 
     def obtener_encuestas_activas(self):
         return list(self.poll_service.encuestas_activas.values())
