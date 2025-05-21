@@ -1,5 +1,5 @@
 class ChatbotService:
-    def _init_(self, modelo="default"):
+    def __init__(self, modelo="default"):
         self.modelo = modelo
         self.respuestas = {
             "hola": "¡Hola! ¿En qué puedo ayudarte?",
