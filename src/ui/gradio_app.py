@@ -1,5 +1,5 @@
-import json
 import gradio as gr
+import json
 from src.services.poll_service import PollService
 from src.services.user_service import UserService
 from src.services.nft_service import NFTService
@@ -10,21 +10,44 @@ from src.repositories.nft_repo import crear_nft_repo
 from src.controllers.ui_controller import UIController
 from src.config import cargar_config
 
-def lanzar_ui():
-    config = cargar_config()
+config = cargar_config()
 
+def lanzar_ui():
     encuesta_repo = crear_encuesta_repo()
     usuario_repo = crear_usuario_repo()
     nft_repo = crear_nft_repo()
 
-    poll_service = PollService(encuesta_repo)  # CORREGIDO
+    poll_service = PollService(encuesta_repo)
     user_service = UserService(usuario_repo)
     nft_service = NFTService(nft_repo, config)
-    chatbot_service = ChatbotService(config["modelo_chatbot"])
+    chatbot_service = ChatbotService(config.get("modelo_chatbot", "default"))
 
     controller = UIController(poll_service, user_service, nft_service, chatbot_service)
 
-    print("Interfaz lanzada correctamente.")
+    def manejar_registro(username, password):
+        return controller.registrar_usuario(username, password)
+
+    def manejar_login(username, password):
+        return controller.iniciar_sesion(username, password)
+
+    with gr.Blocks() as demo:
+        gr.Markdown("# Bienvenido a la app")
+
+        with gr.Tab("Registrarse"):
+            user_r = gr.Textbox(label="Usuario")
+            pass_r = gr.Textbox(label="Contraseña", type="password")
+            out_r = gr.Textbox(label="Resultado del registro")
+            btn_r = gr.Button("Registrarse")
+            btn_r.click(fn=manejar_registro, inputs=[user_r, pass_r], outputs=out_r)
+
+        with gr.Tab("Iniciar sesión"):
+            user_l = gr.Textbox(label="Usuario")
+            pass_l = gr.Textbox(label="Contraseña", type="password")
+            out_l = gr.Textbox(label="Resultado del login")
+            btn_l = gr.Button("Iniciar sesión")
+            btn_l.click(fn=manejar_login, inputs=[user_l, pass_l], outputs=out_l)
+
+    demo.launch()
 
 
 

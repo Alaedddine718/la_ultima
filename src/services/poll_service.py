@@ -1,5 +1,5 @@
 class PollService:
-    def _init_(self, encuesta_repo):
+    def __init__(self, encuesta_repo):
         self.encuesta_repo = encuesta_repo
 
     def crear_encuesta(self, pregunta, opciones, creador, duracion):

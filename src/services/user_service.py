@@ -2,7 +2,7 @@ import bcrypt
 import uuid
 
 class UserService:
-    def _init_(self, user_repo):
+    def __init__(self, user_repo):
         self.user_repo = user_repo
         self.sesiones = {}  # Para manejar sesiones locales
 
