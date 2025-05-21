@@ -10,24 +10,26 @@ class EncuestaRepository(ABC):
     def obtener_encuesta(self, encuesta_id):
         pass
 
-# Dummy temporal para desarrollo
-class DummyEncuestaRepo(EncuestaRepository):
-    def _init_(self):
-        self.db = {}
+    @abstractmethod
+    def votar(self, encuesta_id, username, opcion):
+        pass
 
-    def guardar_encuesta(self, encuesta_dict):
-        self.db[encuesta_dict["id"]] = encuesta_dict
+    @abstractmethod
+    def obtener_resultados(self, encuesta_id):
+        pass
 
-    def obtener_encuesta(self, encuesta_id):
-        return self.db.get(encuesta_id, None)
+    @abstractmethod
+    def obtener_encuestas_activas(self):
+        pass
 
 def crear_encuesta_repo():
     config = cargar_config()
     tipo = config.get("base_datos")
 
     if tipo == "dummy":
-        return DummyEncuestaRepo()
-    
+        from src.repositories.dummy.encuesta_repo_dummy import EncuestaRepositoryDummy
+        return EncuestaRepositoryDummy()
+
     elif tipo == "mongo":
         from src.repositories.mongo.encuesta_repo_mongo import EncuestaRepositoryMongo
         return EncuestaRepositoryMongo(config["mongo_uri"])
