@@ -47,6 +47,9 @@ def lanzar_ui():
     def ver_encuestas_activas_ui():
         return controller.obtener_encuestas_activas()
 
+    def responder_chat_ui(username, mensaje):
+        return controller.responder_chat(username, mensaje)
+
     with gr.Blocks() as demo:
         gr.Markdown("# Bienvenido a la app")
 
@@ -91,6 +94,13 @@ def lanzar_ui():
             activas_out = gr.Textbox(label="Encuestas activas")
             btn_activas = gr.Button("Mostrar encuestas activas")
             btn_activas.click(fn=ver_encuestas_activas_ui, outputs=activas_out)
+
+        with gr.Tab("Chat"):
+            user_chat = gr.Textbox(label="Usuario")
+            mensaje_chat = gr.Textbox(label="Mensaje")
+            respuesta_chat = gr.Textbox(label="Respuesta")
+            btn_chat = gr.Button("Enviar mensaje")
+            btn_chat.click(fn=responder_chat_ui, inputs=[user_chat, mensaje_chat], outputs=respuesta_chat)
 
     demo.launch()
 
