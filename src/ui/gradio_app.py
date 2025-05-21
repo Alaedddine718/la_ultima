@@ -30,6 +30,10 @@ def lanzar_ui():
     def manejar_login(username, password):
         return controller.iniciar_sesion(username, password)
 
+    def crear_encuesta_fn(pregunta, opciones, creador, duracion):
+        lista_opciones = [op.strip() for op in opciones.split(",")]
+        return controller.crear_encuesta(pregunta, lista_opciones, creador, duracion)
+
     with gr.Blocks() as demo:
         gr.Markdown("# Bienvenido a la app")
 
@@ -47,7 +51,23 @@ def lanzar_ui():
             btn_l = gr.Button("Iniciar sesión")
             btn_l.click(fn=manejar_login, inputs=[user_l, pass_l], outputs=out_l)
 
+        with gr.Tab("Crear encuesta"):
+            pregunta = gr.Textbox(label="Pregunta")
+            opciones = gr.Textbox(label="Opciones (separadas por coma)")
+            creador = gr.Textbox(label="Creador")
+            duracion = gr.Number(label="Duración (en segundos)", value=60)
+            out_encuesta = gr.Textbox(label="Resultado")
+            crear_btn = gr.Button("Crear encuesta")
+            crear_btn.click(
+                fn=crear_encuesta_fn,
+                inputs=[pregunta, opciones, creador, duracion],
+                outputs=out_encuesta
+            )
+
     demo.launch()
+
+
+
 
 
 

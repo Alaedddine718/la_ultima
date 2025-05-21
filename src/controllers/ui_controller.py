@@ -16,6 +16,13 @@ class UIController:
             return "Inicio de sesión exitoso."
         return "Credenciales incorrectas."
 
+    def crear_encuesta(self, pregunta, opciones, creador, duracion):
+        try:
+            self.poll_service.crear_encuesta(pregunta, opciones, creador, duracion)
+            return "Encuesta creada correctamente."
+        except Exception as e:
+            return f"Error al crear encuesta: {str(e)}"
+
     def obtener_encuestas_activas(self):
         return list(self.poll_service.encuestas_activas.values())
 
@@ -42,6 +49,7 @@ class UIController:
 
     def responder_chat(self, username, mensaje):
         return self.chatbot_service.responder(username, mensaje)
+
 
 
 
