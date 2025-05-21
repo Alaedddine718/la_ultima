@@ -25,7 +25,7 @@ class EncuestaRepository(ABC):
 
 
 class DummyEncuestaRepo(EncuestaRepository):
-    def _init_(self):  # <---- CORREGIDO AQUI
+    def __init__(self):  # <---- CORREGIDO AQUI
         self.encuestas = {}
 
     def guardar_encuesta(self, encuesta_dict):
