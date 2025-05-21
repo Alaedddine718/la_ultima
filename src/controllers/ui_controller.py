@@ -49,9 +49,18 @@ class UIController:
 
     def responder_chat(self, username, mensaje):
         return self.chatbot_service.responder(username, mensaje)
+
     def crear_encuesta_ui(self, pregunta, opciones, creador, duracion):
         return self.poll_service.crear_encuesta(pregunta, opciones, creador, duracion)
 
+    def obtener_resultados_ui(self, encuesta_id):
+        try:
+            resultados = self.poll_service.obtener_resultados(encuesta_id)
+            if not resultados:
+                return "No hay votos aún."
+            return resultados
+        except Exception as e:
+            return f"Error al obtener resultados: {str(e)}"
 
 
 

@@ -1,33 +1,42 @@
 from src.repositories.encuesta_repo import EncuestaRepository
+from datetime import datetime, timedelta
 
 class EncuestaRepositoryDummy(EncuestaRepository):
     def __init__(self):
         self.encuestas = {}
-        self.votos = {}
 
     def guardar_encuesta(self, encuesta_dict):
-        encuesta_id = encuesta_dict.get("id") or str(len(self.encuestas) + 1)
-        encuesta_dict["id"] = encuesta_id
-        encuesta_dict["votos"] = {}
+        encuesta_id = encuesta_dict.get("id")
+        if not encuesta_id:
+            raise ValueError("La encuesta debe tener un ID.")
+        encuesta_dict["resultados"] = {}
         self.encuestas[encuesta_id] = encuesta_dict
 
     def obtener_encuesta(self, encuesta_id):
         return self.encuestas.get(encuesta_id)
 
-    def votar(self, encuesta_id, username, opcion):
-        encuesta = self.encuestas.get(encuesta_id)
-        if encuesta:
-            encuesta["votos"][username] = opcion
-
     def obtener_resultados(self, encuesta_id):
         encuesta = self.encuestas.get(encuesta_id)
         if not encuesta:
-            return {}
-        resultados = {opcion: 0 for opcion in encuesta["opciones"]}
-        for voto in encuesta["votos"].values():
-            if voto in resultados:
-                resultados[voto] += 1
-        return resultados
+            raise Exception("Encuesta no encontrada.")
+        return encuesta.get("resultados", {})
+
+    def votar(self, encuesta_id, username, opcion):
+        encuesta = self.encuestas.get(encuesta_id)
+        if not encuesta:
+            raise Exception("Encuesta no encontrada.")
+        if "resultados" not in encuesta:
+            encuesta["resultados"] = {}
+        if opcion not in encuesta["resultados"]:
+            encuesta["resultados"][opcion] = 0
+        encuesta["resultados"][opcion] += 1
 
     def obtener_encuestas_activas(self):
-        return list(self.encuestas.values())
+        activas = []
+        ahora = datetime.now()
+        for encuesta in self.encuestas.values():
+            inicio = datetime.fromisoformat(encuesta["inicio"])
+            duracion = int(encuesta["duracion"])
+            if ahora < inicio + timedelta(seconds=duracion):
+                activas.append(encuesta)
+        return activas
